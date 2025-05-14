@@ -1,5 +1,5 @@
 # GHLearning-EasySentry
-
+[![GitHub Actions GHLearning-EasySentry](https://github.com/gordon-hung/GHLearning-EasySentry/actions/workflows/dotnet.yml/badge.svg)](https://github.com/gordon-hung/GHLearning-EasySentry/actions/workflows/dotnet.yml) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/gordon-hung/GHLearning-EasySentry)
 ## ASP.NET Core
 #### Learn about Sentry's .NET integration with ASP.NET Core.
 Sentry provides an integration with ASP.NET Core through the [Sentry.AspNetCore](https://www.nuget.org/packages/Sentry.AspNetCore) NuGet package.
