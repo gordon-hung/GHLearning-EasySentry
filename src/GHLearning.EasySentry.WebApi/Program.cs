@@ -1,10 +1,15 @@
-﻿using Microsoft.AspNetCore.HttpLogging;
+﻿using System.Net.Mime;
+using System.Text.Json.Serialization;
+using CorrelationId;
+using CorrelationId.Abstractions;
+using CorrelationId.DependencyInjection;
+using GHLearning.EasySentry.WebApi.Correlations;
+using GHLearning.EasySentry.WebApi.Middlewares;
+using Microsoft.AspNetCore.HttpLogging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using Scalar.AspNetCore;
-using System.Net.Mime;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +35,21 @@ builder.Services.AddHttpLogging(logging =>
 	logging.CombineLogs = true;
 });
 
+//Learn more about configuring CorrelationId at https://github.com/stevejgordon/CorrelationId/wiki
+builder.Services.AddCorrelationId<CustomCorrelationIdProvider>(options =>
+{
+	options.AddToLoggingScope = true;
+	options.LoggingScopeKey = CorrelationIdOptions.DefaultHeader;
+});
+
+builder.Services.AddLogging(configure =>
+{
+	configure.ClearProviders();
+	configure.AddConfiguration(builder.Configuration);
+	configure.AddConsole();
+	configure.AddSentry();
+});
+
 // Learn more about configuring Sentry at https://docs.sentry.io/platforms/dotnet/guides/aspnetcore/
 builder.WebHost.UseSentry();
 
@@ -49,6 +69,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCorrelationId();
+
+app.UseMiddleware<CorrelationMiddleware>();
+app.UseMiddleware<SentryMiddleware>();
 
 app.UseHttpLogging();
 
